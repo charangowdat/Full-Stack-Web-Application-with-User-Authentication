@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>getUser</title>
+    <style>
+        body{
+            background-color: black;
+            color: aliceblue;
+            height: 100%;
+            margin: 0;
+           
+        }
+
+        button{
+            
+            padding:10px;
+            width:100px;
+            border-radius: 20px;
+            margin: 40px 0px 0px 700px;
+            border: 2px solid aqua;
+            background-color: black;
+            color: white;
+            font-size: large;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            
+        }
+
+        button:hover{
+            background-color: aqua;
+            color: black;
+            box-shadow: 0px 0px 20px white;
+        }
+    </style>
+</head>
+<body>
+    <form id="getUser">
+        <button type="submit">Get All Users</button>
+    </form>
+
+    <div id="result" style="font-size: 25px;">
+        
+    </div>
+
+    <script>
+        const formEl = document.getElementById('getUser');
+    
+        formEl.addEventListener('submit', event =>{
+            event.preventDefault();
+    
+            const formData = new FormData(formEl);
+            const data = Object.fromEntries(formData);
+    
+            fetch('http://127.0.0.1:8000/api/v1/project/gerAllUsers',{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+    
+                },
+                
+            }).then(res =>res.json())
+            .then(data => {
+            if(data.status == 'success')
+            {
+                document.getElementById('result').innerHTML = `
+                    <h1>&nbsp&nbsp List of Users:</h1>
+                    <p>`;
+
+// Iterate over the array of users
+for (let i = 0; i < data.data.users.length; i++) {
+    // Append each user's name to the HTML string
+    document.getElementById('result').innerHTML += `
+&nbsp ${i+1}) ${data.data.users[i].name} ,   ${data.data.users[i].email}<br><br>`;
+}
+
+document.getElementById('result').innerHTML += `
+    </p>`;
+            }else{
+                window.alert(data.message);
+            }
+        })
+            .catch(error=> console.log(error));
+        })
+     </script>
+</body>
+</html>
